@@ -1,0 +1,8 @@
+[package]
+name = "rust-actix-mysql"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+actix-web = "4.9.0"
+serde = { version = "1.0.207", features = ["derive"] }
