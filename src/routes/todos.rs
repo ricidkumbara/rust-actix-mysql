@@ -1,6 +1,13 @@
-use actix_web::{get, post, web::{Data, Json}, HttpResponse, Responder};
+use actix_web::{get, post, put, web::{Data, Json, Path}, HttpResponse, Responder};
 use serde::{Deserialize, Serialize};
 use sqlx::{prelude::FromRow, MySqlPool};
+
+#[derive(Serialize, Deserialize, FromRow)]
+pub struct Todo {
+    id: i32,
+    title: String,
+    description: Option<String>,
+}
 
 #[derive(Serialize, Deserialize)]
 pub struct CreateNewTodo {
@@ -8,11 +15,11 @@ pub struct CreateNewTodo {
     description: Option<String>
 }
 
-#[derive(Serialize, Deserialize, FromRow)]
-pub struct Todo {
+#[derive(Serialize, Deserialize)]
+pub struct UpdateExistingTodo {
     id: i32,
     title: String,
-    description: Option<String>,
+    description: Option<String>
 }
 
 #[derive(Serialize)]
@@ -51,5 +58,20 @@ pub async fn get_all_todo(db: Data<MySqlPool>) -> impl Responder {
         Err(_e) => HttpResponse::InternalServerError().json(TypeDBError {
             error: _e.to_string(),
         })
+    }
+}
+
+#[put("/todos/{id}")]
+pub async fn update_existing_todo(db: Data<MySqlPool>, params: Path<i32>, body: Json<UpdateExistingTodo>) -> impl Responder {
+    let response = sqlx::query("update todos set title = ?, description = ? where id = ?")
+        .bind(&body.title)
+        .bind(&body.description)
+        .bind(&params.clone())
+        .execute(&**db)
+        .await;
+
+    match response {
+        Ok(_) => HttpResponse::Ok(),
+        Err(_) => HttpResponse::InternalServerError()
     }
 }
