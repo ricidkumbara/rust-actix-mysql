@@ -21,6 +21,7 @@ async fn main() -> std::io::Result<()> {
             .service(create_new_todo)
             .service(get_all_todo)
             .service(update_existing_todo)
+            .service(delete_todo)
     }).bind(("127.0.0.1", 8080))?
     .run();
 

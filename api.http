@@ -38,3 +38,7 @@ Content-Type: application/json
   "title": "Learn Rust Update-001",
   "description": "Learn rust in 1 week Update-001"
 }
+
+###
+DELETE http://localhost:8080/todos/2
+Content-Type: application/json

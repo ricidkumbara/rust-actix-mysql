@@ -1,4 +1,4 @@
-use actix_web::{get, post, put, web::{Data, Json, Path}, HttpResponse, Responder};
+use actix_web::{delete, get, post, put, web::{Data, Json, Path}, HttpResponse, Responder};
 use serde::{Deserialize, Serialize};
 use sqlx::{prelude::FromRow, MySqlPool};
 
@@ -67,6 +67,19 @@ pub async fn update_existing_todo(db: Data<MySqlPool>, params: Path<i32>, body: 
         .bind(&body.title)
         .bind(&body.description)
         .bind(&params.clone())
+        .execute(&**db)
+        .await;
+
+    match response {
+        Ok(_) => HttpResponse::Ok(),
+        Err(_) => HttpResponse::InternalServerError()
+    }
+}
+
+#[delete("/todos/{id}")]
+pub async fn delete_todo(db: Data<MySqlPool>, id: Path<i32>) -> impl Responder {
+    let response = sqlx::query("delete from todos where id = ?")
+        .bind(id.clone())
         .execute(&**db)
         .await;
 
