@@ -1,26 +1,26 @@
-use actix_web::{get, web::{self, Path}, App, HttpServer, Responder};
+use actix_web::{App, HttpServer};
 
-#[get("/")]
-async fn home() -> impl Responder {
-    let response = "Welcome to Rust!!!";
+mod routes;
+use routes::*;
 
-    response
-}
+mod database;
+use database::*;
 
-#[get("/hello/{first_name}/{last_name}")]
-async fn hello(params: Path<(String, String)>) -> impl Responder {
-    let response = format!("Hello {} {}", params.0, params.1);
-
-    response
-}
-
-#[actix_web::main]
+// #[actix_web::main]
+#[tokio::main]
 async fn main() -> std::io::Result<()> {
-    HttpServer::new(|| {
+    let database = database_connection().await.expect("Database connection Failed");
+    println!("Database connection established");
+
+    let server = HttpServer::new(move || {
         App::new()
+            .app_data(database.clone())
             .service(home)
             .service(hello)
+            .service(create_new_user)
     }).bind(("127.0.0.1", 8080))?
-    .run()
-    .await
+    .run();
+
+    println!("Server running at 127.0.0.1:8080");
+    server.await
 }
