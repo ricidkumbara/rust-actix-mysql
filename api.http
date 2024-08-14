@@ -13,3 +13,16 @@ Content-Type: application/json
   "first_name": "Ricid",
   "last_name": "Kumbara"
 }
+
+###
+GET http://localhost:8080/todos
+Content-Type: application/json
+
+###
+POST http://localhost:8080/todos
+Content-Type: application/json
+
+{
+  "title": "Learn Rust",
+  "description": "Learn rust in 1 week"
+}

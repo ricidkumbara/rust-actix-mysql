@@ -1,4 +1,4 @@
-use actix_web::{App, HttpServer};
+use actix_web::{web::Data, App, HttpServer};
 
 mod routes;
 use routes::*;
@@ -14,10 +14,12 @@ async fn main() -> std::io::Result<()> {
 
     let server = HttpServer::new(move || {
         App::new()
-            .app_data(database.clone())
+            .app_data(Data::new(database.clone()))
             .service(home)
             .service(hello)
             .service(create_new_user)
+            .service(create_new_todo)
+            .service(get_all_todo)
     }).bind(("127.0.0.1", 8080))?
     .run();
 
