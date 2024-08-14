@@ -8,3 +8,4 @@ actix-web = "4.9.0"
 serde = { version = "1.0.207", features = ["derive"] }
 tokio = { version = "*", features = ["macros", "rt-multi-thread"] }
 sqlx = { version = "*", features = ["mysql", "runtime-tokio-native-tls"] }
+dotenv = "0.15.0"
